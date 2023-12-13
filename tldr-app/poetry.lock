@@ -12,6 +12,21 @@ files = [
 ]
 
 [[package]]
+name = "ansi2html"
+version = "1.9.1"
+description = "Convert text with ANSI color codes to HTML or to LaTeX"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "ansi2html-1.9.1-py3-none-any.whl", hash = "sha256:29ccdb1e83520d648ebdc9c9544059ea4d424ecc33d3ef723657f7f5a9ae5225"},
+    {file = "ansi2html-1.9.1.tar.gz", hash = "sha256:5c6837a13ecc1903aab7a545353312049dfedfe5105362ad3a8d9d207871ec71"},
+]
+
+[package.extras]
+docs = ["mkdocs", "mkdocs-material", "mkdocs-material-extensions", "mkdocstrings", "mkdocstrings-python", "pymdown-extensions"]
+test = ["pytest", "pytest-cov"]
+
+[[package]]
 name = "anyio"
 version = "3.7.1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -351,4 +366,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cb5fe0eea62920d6ae19622d4bfa1af442c57a572d91d57167c531d9368db48b"
+content-hash = "1cb03983eac5d5f1c58ed25af4f70e9da6476ace8ae81dc22c5945c75d89710a"
