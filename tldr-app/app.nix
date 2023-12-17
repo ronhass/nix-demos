@@ -15,6 +15,8 @@ let
     inherit name;
     runtimeInputs = dependencies;
     text = ''
+      ${pkgs.busybox}/bin/mkdir -p /tmp  # needed for tldr
+
       ${app.dependencyEnv}/bin/uvicorn "$@" tldr_app.main:app
     '';
   };

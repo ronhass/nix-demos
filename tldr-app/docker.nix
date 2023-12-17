@@ -1,5 +1,5 @@
 { pkgs, app }:
-pkgs.dockerTools.buildImage {
+pkgs.dockerTools.buildLayeredImage {
     name = app.name;
     tag = "latest";
 
@@ -7,11 +7,7 @@ pkgs.dockerTools.buildImage {
         Cmd = [app.bin] ++ app.prodArgs;
     };
 
-    copyToRoot = [
+    contents = [
         pkgs.dockerTools.caCertificates
     ];
-
-    runAsRoot = ''
-        mkdir -p /tmp
-    '';
 }
