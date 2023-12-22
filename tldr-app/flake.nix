@@ -8,28 +8,42 @@
       url = "github:nix-community/poetry2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, poetry2nix, flake-utils }:
-  flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"] (system:
-    let
-      pkgs = nixpkgs.legacyPackages."${system}";
-      p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
+  outputs = { self, nixpkgs, poetry2nix }:
+  let
+    supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+    supportedDockerSystems = ["x86_64-linux" "aarch64-linux"];
+    forDockerSystems = nixpkgs.lib.genAttrs supportedDockerSystems;
 
-      app = import ./app.nix { inherit pkgs; poetry2nix = p2n; };
-      image = import ./docker.nix { inherit pkgs app; };
-    in
-    {
-      apps.default = {
+    pkgs = forAllSystems (system: nixpkgs.legacyPackages.${system});
+
+    app = forAllSystems (system: import ./app.nix {
+      inherit self;
+      pkgs = pkgs.${system}; 
+      poetry2nix = poetry2nix.lib.mkPoetry2Nix { pkgs = pkgs.${system}; };
+    });
+
+    image = forDockerSystems (system: import ./docker.nix {
+      pkgs = pkgs.${system}; 
+      app = app.${system}; 
+    });
+  in
+  {
+    apps = forAllSystems (system: {
+      default = {
         type = "app";
-        program = app.bin;
+        program = app.${system}.bin;
       };
+    });
 
-      devShells.default = app.devEnv;
+    devShells = forAllSystems (system: {
+      default = app.${system}.devEnv;
+    });
 
-      image = image;
-    }
-  );
+    packages = forDockerSystems (system: {
+      default = image.${system};
+    });
+  };
 }
